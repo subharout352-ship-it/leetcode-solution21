@@ -1,0 +1,51 @@
+class Solution(object):
+    def maxNumber(self, nums1, nums2, k):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
+
+        def get_max(nums, length):
+            drop = len(nums) - length
+            stack = []
+
+            for num in nums:
+                while drop > 0 and stack and stack[-1] < num:
+                    stack.pop()
+                    drop -= 1
+                stack.append(num)
+
+            return stack[:length]
+
+        def merge(a, b):
+            result = []
+            i = 0
+            j = 0
+
+            while i < len(a) or j < len(b):
+                if a[i:] > b[j:]:
+                    result.append(a[i])
+                    i += 1
+                else:
+                    result.append(b[j])
+                    j += 1
+
+            return result
+
+        best = []
+
+        start = max(0, k - len(nums2))
+        end = min(k, len(nums1))
+
+        for i in range(start, end + 1):
+            a = get_max(nums1, i)
+            b = get_max(nums2, k - i)
+
+            candidate = merge(a, b)
+
+            if candidate > best:
+                best = candidate
+
+        return best
